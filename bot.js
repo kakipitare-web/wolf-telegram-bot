@@ -131,7 +131,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
   // Header: "המלצת הזאב"
   ctx.fillStyle = '#0a0a0a';
-  ctx.font = 'bold 36px "Heebo Bold"';
+  ctx.font = 'bold 36px sans-serif';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   ctx.direction = 'rtl';
@@ -146,7 +146,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
   ctx.arc(bcx, bcy, 26, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 28px "Heebo Bold"';
+  ctx.font = 'bold 28px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(String(bets.length), bcx, bcy);
@@ -171,7 +171,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
     // Market name (Hebrew RTL)
     ctx.fillStyle = '#0a0a0a';
-    ctx.font = 'bold 34px "Heebo Bold"';
+    ctx.font = 'bold 34px sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(bet.market, marketRightX, curY + 30);
@@ -179,14 +179,14 @@ function drawBettingSlip(ctx, data, x, y, w) {
     // Detail
     if (bet.detail) {
       ctx.fillStyle = '#888888';
-      ctx.font = '400 24px "Heebo Bold"';
+      ctx.font = '400 24px sans-serif';
       ctx.fillText(bet.detail, marketRightX, curY + 72);
     }
 
     // Odds pill - black with orange text
     if (bet.odds) {
       ctx.save();
-      ctx.font = 'bold 36px "Heebo Bold"';
+      ctx.font = 'bold 36px sans-serif';
       const oddsW = ctx.measureText(bet.odds).width + 40;
       const oddsH = 60;
       const oddsX = x + 40;
@@ -258,7 +258,7 @@ async function generateImage(data) {
   // League/time badge (top center)
   if (data.league || data.time) {
     const badgeText = [data.league, data.time].filter(Boolean).join(' · ');
-    ctx.font = 'bold 26px "Heebo Bold"';
+    ctx.font = 'bold 26px sans-serif';
     const bw = ctx.measureText(badgeText).width + 50;
     ctx.fillStyle = 'rgba(0,0,0,0.8)';
     ctx.strokeStyle = '#ff6b00';
@@ -277,7 +277,7 @@ async function generateImage(data) {
   if (data.match) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px "Heebo Bold"`;
+    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px sans-serif`;
     ctx.fillStyle = '#ffffff';
     ctx.fillText(data.match, W / 2, contentY);
     contentY += currentSize === 'post' ? 30 : 45;
@@ -293,7 +293,7 @@ async function generateImage(data) {
 
   // Footer
   ctx.fillStyle = '#ff6b00';
-  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px "Heebo Bold"`;
+  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('@thewolfbet', W / 2, H - 40);
