@@ -12,28 +12,15 @@ const TEMPLATE_PATH = path.join(__dirname, 'template.png');
 const OUTPUT_DIR = path.join(__dirname, 'output');
 if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
 
-// Load Hebrew/English font (Heebo) - bundled with project
-let FONT_NAME = 'sans-serif';
+// Load font with Hebrew + English support
 try {
-  const fontsDir = path.join(__dirname, 'fonts');
-  const boldPath = path.join(fontsDir, 'Heebo-Bold.ttf');
-  const regPath = path.join(fontsDir, 'Heebo-Regular.ttf');
-
-  console.log('Bold font exists:', fs.existsSync(boldPath));
-  console.log('Reg font exists:', fs.existsSync(regPath));
-
-  if (fs.existsSync(boldPath)) {
-    const ok1 = GlobalFonts.registerFromPath(boldPath, 'MyFont');
-    console.log('Registered Bold:', ok1);
-    if (ok1) FONT_NAME = 'MyFont';
+  const fontPath = path.join(__dirname, 'fonts', 'NotoSansHebrew-Bold.ttf');
+  if (fs.existsSync(fontPath)) {
+    GlobalFonts.registerFromPath(fontPath, 'WolfFont');
+    console.log('Font registered successfully');
+  } else {
+    console.log('Font file not found at:', fontPath);
   }
-  if (fs.existsSync(regPath)) {
-    const ok2 = GlobalFonts.registerFromPath(regPath, 'MyFontReg');
-    console.log('Registered Reg:', ok2);
-  }
-
-  console.log('Available fonts count:', GlobalFonts.families.length);
-  console.log('FONT_NAME will be:', FONT_NAME);
 } catch(e) {
   console.log('Font error:', e.message);
 }
@@ -138,7 +125,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
   // Header: "המלצת הזאב"
   ctx.fillStyle = '#0a0a0a';
-  ctx.font = 'bold 36px MyFont';
+  ctx.font = 'bold 36px WolfFont';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   ctx.direction = 'rtl';
@@ -153,7 +140,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
   ctx.arc(bcx, bcy, 26, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 28px MyFont';
+  ctx.font = 'bold 28px WolfFont';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(String(bets.length), bcx, bcy);
@@ -178,7 +165,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
     // Market name (Hebrew RTL)
     ctx.fillStyle = '#0a0a0a';
-    ctx.font = 'bold 34px MyFont';
+    ctx.font = 'bold 34px WolfFont';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(bet.market, marketRightX, curY + 30);
@@ -186,14 +173,14 @@ function drawBettingSlip(ctx, data, x, y, w) {
     // Detail
     if (bet.detail) {
       ctx.fillStyle = '#888888';
-      ctx.font = '400 24px MyFont';
+      ctx.font = '400 24px WolfFont';
       ctx.fillText(bet.detail, marketRightX, curY + 72);
     }
 
     // Odds pill - black with orange text
     if (bet.odds) {
       ctx.save();
-      ctx.font = 'bold 36px MyFont';
+      ctx.font = 'bold 36px WolfFont';
       const oddsW = ctx.measureText(bet.odds).width + 40;
       const oddsH = 60;
       const oddsX = x + 40;
@@ -265,7 +252,7 @@ async function generateImage(data) {
   // League/time badge (top center)
   if (data.league || data.time) {
     const badgeText = [data.league, data.time].filter(Boolean).join(' · ');
-    ctx.font = 'bold 26px MyFont';
+    ctx.font = 'bold 26px WolfFont';
     const bw = ctx.measureText(badgeText).width + 50;
     ctx.fillStyle = 'rgba(0,0,0,0.8)';
     ctx.strokeStyle = '#ff6b00';
@@ -284,7 +271,7 @@ async function generateImage(data) {
   if (data.match) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px MyFont`;
+    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px WolfFont`;
     ctx.fillStyle = '#ffffff';
     ctx.fillText(data.match, W / 2, contentY);
     contentY += currentSize === 'post' ? 30 : 45;
@@ -300,7 +287,7 @@ async function generateImage(data) {
 
   // Footer
   ctx.fillStyle = '#ff6b00';
-  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px MyFont`;
+  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px WolfFont`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('@thewolfbet', W / 2, H - 40);
