@@ -1,0 +1,14 @@
+{
+  "name": "wolf-telegram-bot",
+  "version": "1.0.0",
+  "description": "Wolf betting tip image generator bot",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0",
+    "@napi-rs/canvas": "^0.1.53",
+    "dotenv": "^16.4.5"
+  }
+}
