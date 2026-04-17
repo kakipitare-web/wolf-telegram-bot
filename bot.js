@@ -278,43 +278,60 @@ async function generateImage(data) {
 // ============ TEMPLATE (easy to copy-paste with spaces) ============
 
 const TEMPLATE_TEXT = `match:
+
+
 league:
+
+
 time:
 
+
+
 bet1:
+
 odds1:
+
 detail1:
 
+
+
 bet2:
+
 odds2:
+
 detail2:
 
+
+
 bet3:
+
 odds3:
+
 detail3: `;
 
 function sendTemplate(chatId) {
-  bot.sendMessage(chatId, '```\n' + TEMPLATE_TEXT + '\n```\n\n🐺 העתק, מלא, ושלח חזרה.\n\n📏 גדלים:\n/story - אינסטגרם סטורי (1080x1920)\n/post - אינסטגרם פוסט (1080x1080)', { parse_mode: 'Markdown' });
+  // Send ONLY the template, no extra text
+  bot.sendMessage(chatId, '```\n' + TEMPLATE_TEXT + '\n```', { parse_mode: 'Markdown' });
 }
 
-// /start, /t, /tem, /template all send the blank template
-bot.onText(/^\/(start|t|tem|template)$/, (msg) => {
+// All these commands send the blank template: /start, /t, /tem, /template, /new
+bot.onText(/^\/(start|t|tem|template|new)$/, (msg) => {
   sendTemplate(msg.chat.id);
 });
 
-// Size switchers
+// Size switchers + send template
 bot.onText(/^\/story$/, (msg) => {
   currentSize = 'story';
   W = SIZES.story.W;
   H = SIZES.story.H;
-  bot.sendMessage(msg.chat.id, '📐 Size set to: Story (1080x1920)');
+  sendTemplate(msg.chat.id);
 });
 
 bot.onText(/^\/post$/, (msg) => {
   currentSize = 'post';
   W = SIZES.post.W;
   H = SIZES.post.H;
-  bot.sendMessage(msg.chat.id, '📐 Size set to: Post (1080x1080)');
+  sendTemplate(msg.chat.id);
 });
 
 // Accept filled template (any text with "match:" or "bet1:")
