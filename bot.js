@@ -1,7 +1,7 @@
 // Wolf Telegram Bot - Simple & Clean
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
-const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,6 +11,25 @@ if (!TOKEN) { console.error('ERROR: Set TELEGRAM_BOT_TOKEN in .env'); process.ex
 const TEMPLATE_PATH = path.join(__dirname, 'template.png');
 const OUTPUT_DIR = path.join(__dirname, 'output');
 if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
+
+// Load Hebrew/English font that works on Linux
+try {
+  const fontsDir = path.join(__dirname, 'fonts');
+  if (fs.existsSync(fontsDir)) {
+    const boldPath = path.join(fontsDir, 'Heebo-Bold.ttf');
+    const regPath = path.join(fontsDir, 'Heebo-Regular.ttf');
+    if (fs.existsSync(boldPath)) {
+      GlobalFonts.registerFromPath(boldPath, 'Heebo Bold');
+      console.log('Registered Heebo Bold');
+    }
+    if (fs.existsSync(regPath)) {
+      GlobalFonts.registerFromPath(regPath, 'Heebo');
+      console.log('Registered Heebo Regular');
+    }
+  }
+} catch(e) {
+  console.log('Font registration error:', e.message);
+}
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 console.log('🐺 Wolf Bot started.');
@@ -112,7 +131,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
   // Header: "המלצת הזאב"
   ctx.fillStyle = '#0a0a0a';
-  ctx.font = 'bold 36px Arial, sans-serif';
+  ctx.font = 'bold 36px "Heebo Bold"';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   ctx.direction = 'rtl';
@@ -127,7 +146,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
   ctx.arc(bcx, bcy, 26, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 28px Arial';
+  ctx.font = 'bold 28px "Heebo Bold"';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(String(bets.length), bcx, bcy);
@@ -152,7 +171,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
     // Market name (Hebrew RTL)
     ctx.fillStyle = '#0a0a0a';
-    ctx.font = 'bold 34px Arial, sans-serif';
+    ctx.font = 'bold 34px "Heebo Bold"';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(bet.market, marketRightX, curY + 30);
@@ -160,14 +179,14 @@ function drawBettingSlip(ctx, data, x, y, w) {
     // Detail
     if (bet.detail) {
       ctx.fillStyle = '#888888';
-      ctx.font = '400 24px Arial, sans-serif';
+      ctx.font = '400 24px "Heebo Bold"';
       ctx.fillText(bet.detail, marketRightX, curY + 72);
     }
 
     // Odds pill - black with orange text
     if (bet.odds) {
       ctx.save();
-      ctx.font = 'bold 36px Arial';
+      ctx.font = 'bold 36px "Heebo Bold"';
       const oddsW = ctx.measureText(bet.odds).width + 40;
       const oddsH = 60;
       const oddsX = x + 40;
@@ -239,7 +258,7 @@ async function generateImage(data) {
   // League/time badge (top center)
   if (data.league || data.time) {
     const badgeText = [data.league, data.time].filter(Boolean).join(' · ');
-    ctx.font = 'bold 26px Arial, sans-serif';
+    ctx.font = 'bold 26px "Heebo Bold"';
     const bw = ctx.measureText(badgeText).width + 50;
     ctx.fillStyle = 'rgba(0,0,0,0.8)';
     ctx.strokeStyle = '#ff6b00';
@@ -258,7 +277,7 @@ async function generateImage(data) {
   if (data.match) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px Arial, sans-serif`;
+    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px "Heebo Bold"`;
     ctx.fillStyle = '#ffffff';
     ctx.fillText(data.match, W / 2, contentY);
     contentY += currentSize === 'post' ? 30 : 45;
@@ -274,7 +293,7 @@ async function generateImage(data) {
 
   // Footer
   ctx.fillStyle = '#ff6b00';
-  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px Arial`;
+  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px "Heebo Bold"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('@thewolfbet', W / 2, H - 40);
