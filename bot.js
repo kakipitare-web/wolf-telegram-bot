@@ -112,7 +112,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
   // Header: "המלצת הזאב"
   ctx.fillStyle = '#0a0a0a';
-  ctx.font = 'bold 36px "Segoe UI", Arial, sans-serif';
+  ctx.font = 'bold 36px Arial, sans-serif';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   ctx.direction = 'rtl';
@@ -152,20 +152,16 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
     // Market name (Hebrew RTL)
     ctx.fillStyle = '#0a0a0a';
-    ctx.font = 'bold 34px "Segoe UI", Arial, sans-serif';
+    ctx.font = 'bold 34px Arial, sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    ctx.direction = 'rtl';
     ctx.fillText(bet.market, marketRightX, curY + 30);
-    ctx.direction = 'ltr';
 
     // Detail
     if (bet.detail) {
       ctx.fillStyle = '#888888';
-      ctx.font = '400 24px "Segoe UI", Arial, sans-serif';
-      ctx.direction = 'rtl';
+      ctx.font = '400 24px Arial, sans-serif';
       ctx.fillText(bet.detail, marketRightX, curY + 72);
-      ctx.direction = 'ltr';
     }
 
     // Odds pill - black with orange text
@@ -243,7 +239,7 @@ async function generateImage(data) {
   // League/time badge (top center)
   if (data.league || data.time) {
     const badgeText = [data.league, data.time].filter(Boolean).join(' · ');
-    ctx.font = 'bold 26px "Segoe UI", Arial, sans-serif';
+    ctx.font = 'bold 26px Arial, sans-serif';
     const bw = ctx.measureText(badgeText).width + 50;
     ctx.fillStyle = 'rgba(0,0,0,0.8)';
     ctx.strokeStyle = '#ff6b00';
@@ -262,7 +258,7 @@ async function generateImage(data) {
   if (data.match) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px "Segoe UI", Arial, sans-serif`;
+    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px Arial, sans-serif`;
     ctx.fillStyle = '#ffffff';
     ctx.fillText(data.match, W / 2, contentY);
     contentY += currentSize === 'post' ? 30 : 45;
