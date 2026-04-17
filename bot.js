@@ -12,25 +12,30 @@ const TEMPLATE_PATH = path.join(__dirname, 'template.png');
 const OUTPUT_DIR = path.join(__dirname, 'output');
 if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
 
-// Load Hebrew/English font (Heebo)
+// Load Hebrew/English font (Heebo) - bundled with project
+let FONT_NAME = 'sans-serif';
 try {
   const fontsDir = path.join(__dirname, 'fonts');
   const boldPath = path.join(fontsDir, 'Heebo-Bold.ttf');
   const regPath = path.join(fontsDir, 'Heebo-Regular.ttf');
 
+  console.log('Bold font exists:', fs.existsSync(boldPath));
+  console.log('Reg font exists:', fs.existsSync(regPath));
+
   if (fs.existsSync(boldPath)) {
     const ok1 = GlobalFonts.registerFromPath(boldPath, 'MyFont');
-    console.log('Registered Bold as MyFont:', ok1);
+    console.log('Registered Bold:', ok1);
+    if (ok1) FONT_NAME = 'MyFont';
   }
   if (fs.existsSync(regPath)) {
-    const ok2 = GlobalFonts.registerFromPath(regPath, 'MyFontRegular');
-    console.log('Registered Regular:', ok2);
+    const ok2 = GlobalFonts.registerFromPath(regPath, 'MyFontReg');
+    console.log('Registered Reg:', ok2);
   }
 
-  // List all available fonts
-  console.log('Available fonts:', GlobalFonts.families.map(f => f.family).join(', '));
+  console.log('Available fonts count:', GlobalFonts.families.length);
+  console.log('FONT_NAME will be:', FONT_NAME);
 } catch(e) {
-  console.log('Font registration error:', e.message, e.stack);
+  console.log('Font error:', e.message);
 }
 
 const bot = new TelegramBot(TOKEN, { polling: true });
