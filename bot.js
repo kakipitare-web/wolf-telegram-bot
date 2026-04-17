@@ -214,17 +214,31 @@ async function generateImage(data) {
   ctx.fillStyle = '#0a0a0a';
   ctx.fillRect(0, 0, W, H);
 
-  // Wolf - scales based on canvas size
-  const wolfDisplayH = currentSize === 'post' ? 400 : 800;
-  const srcH = template.height * 0.58;
-  ctx.drawImage(template, 0, 0, template.width, srcH, 0, 0, W, wolfDisplayH);
+  // Wolf - preserve aspect ratio (no squishing)
+  const wolfDisplayH = currentSize === 'post' ? 380 : 800;
+  const srcH = template.height * 0.55;
+  const srcAspect = template.width / srcH;
+  // Scale to fill width while preserving aspect
+  const drawW = W;
+  const drawH = drawW / srcAspect;
+  const actualDrawH = Math.min(drawH, wolfDisplayH);
+  const actualSrcH = (actualDrawH / drawH) * srcH;
+
+  ctx.drawImage(template, 0, 0, template.width, actualSrcH, 0, 0, drawW, actualDrawH);
 
   // Fade
-  const fadeGrad = ctx.createLinearGradient(0, wolfDisplayH - 150, 0, wolfDisplayH);
+  const fadeY = actualDrawH;
+  const fadeGrad = ctx.createLinearGradient(0, fadeY - 150, 0, fadeY);
   fadeGrad.addColorStop(0, 'rgba(10,10,10,0)');
   fadeGrad.addColorStop(1, 'rgba(10,10,10,1)');
   ctx.fillStyle = fadeGrad;
-  ctx.fillRect(0, wolfDisplayH - 150, W, 150);
+  ctx.fillRect(0, fadeY - 150, W, 150);
+
+  // Fill below wolf with black (no leftover template bottom)
+  if (actualDrawH < wolfDisplayH) {
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, actualDrawH, W, wolfDisplayH - actualDrawH);
+  }
 
   // League/time badge (top center)
   if (data.league || data.time) {
@@ -345,7 +359,11 @@ bot.on('text', async (msg) => {
     const data = parseMessage(text);
 
     if (Object.keys(data).length === 0) {
-      return bot.sendMessage(chatId, '⚠️ Template is empty. Type /template to get a new one.');
+      return bot.sendMessage(chatId, '⚠️ התבנית ריקה. מלא לפחות match ו-bet1 עם odds1');
+    }
+
+    if (!data.bet1) {
+      return bot.sendMessage(chatId, '⚠️ חסר bet1. מלא לפחות הימור אחד');
     }
 
     await bot.sendMessage(chatId, '🎨 Generating...');
