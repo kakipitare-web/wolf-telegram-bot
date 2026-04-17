@@ -12,23 +12,25 @@ const TEMPLATE_PATH = path.join(__dirname, 'template.png');
 const OUTPUT_DIR = path.join(__dirname, 'output');
 if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
 
-// Load Hebrew/English font that works on Linux
+// Load Hebrew/English font (Heebo)
 try {
   const fontsDir = path.join(__dirname, 'fonts');
-  if (fs.existsSync(fontsDir)) {
-    const boldPath = path.join(fontsDir, 'Heebo-Bold.ttf');
-    const regPath = path.join(fontsDir, 'Heebo-Regular.ttf');
-    if (fs.existsSync(boldPath)) {
-      GlobalFonts.registerFromPath(boldPath, 'Heebo Bold');
-      console.log('Registered Heebo Bold');
-    }
-    if (fs.existsSync(regPath)) {
-      GlobalFonts.registerFromPath(regPath, 'Heebo');
-      console.log('Registered Heebo Regular');
-    }
+  const boldPath = path.join(fontsDir, 'Heebo-Bold.ttf');
+  const regPath = path.join(fontsDir, 'Heebo-Regular.ttf');
+
+  if (fs.existsSync(boldPath)) {
+    const ok1 = GlobalFonts.registerFromPath(boldPath, 'MyFont');
+    console.log('Registered Bold as MyFont:', ok1);
   }
+  if (fs.existsSync(regPath)) {
+    const ok2 = GlobalFonts.registerFromPath(regPath, 'MyFontRegular');
+    console.log('Registered Regular:', ok2);
+  }
+
+  // List all available fonts
+  console.log('Available fonts:', GlobalFonts.families.map(f => f.family).join(', '));
 } catch(e) {
-  console.log('Font registration error:', e.message);
+  console.log('Font registration error:', e.message, e.stack);
 }
 
 const bot = new TelegramBot(TOKEN, { polling: true });
@@ -131,7 +133,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
   // Header: "המלצת הזאב"
   ctx.fillStyle = '#0a0a0a';
-  ctx.font = 'bold 36px sans-serif';
+  ctx.font = 'bold 36px MyFont';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   ctx.direction = 'rtl';
@@ -146,7 +148,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
   ctx.arc(bcx, bcy, 26, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 28px sans-serif';
+  ctx.font = 'bold 28px MyFont';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(String(bets.length), bcx, bcy);
@@ -171,7 +173,7 @@ function drawBettingSlip(ctx, data, x, y, w) {
 
     // Market name (Hebrew RTL)
     ctx.fillStyle = '#0a0a0a';
-    ctx.font = 'bold 34px sans-serif';
+    ctx.font = 'bold 34px MyFont';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(bet.market, marketRightX, curY + 30);
@@ -179,14 +181,14 @@ function drawBettingSlip(ctx, data, x, y, w) {
     // Detail
     if (bet.detail) {
       ctx.fillStyle = '#888888';
-      ctx.font = '400 24px sans-serif';
+      ctx.font = '400 24px MyFont';
       ctx.fillText(bet.detail, marketRightX, curY + 72);
     }
 
     // Odds pill - black with orange text
     if (bet.odds) {
       ctx.save();
-      ctx.font = 'bold 36px sans-serif';
+      ctx.font = 'bold 36px MyFont';
       const oddsW = ctx.measureText(bet.odds).width + 40;
       const oddsH = 60;
       const oddsX = x + 40;
@@ -258,7 +260,7 @@ async function generateImage(data) {
   // League/time badge (top center)
   if (data.league || data.time) {
     const badgeText = [data.league, data.time].filter(Boolean).join(' · ');
-    ctx.font = 'bold 26px sans-serif';
+    ctx.font = 'bold 26px MyFont';
     const bw = ctx.measureText(badgeText).width + 50;
     ctx.fillStyle = 'rgba(0,0,0,0.8)';
     ctx.strokeStyle = '#ff6b00';
@@ -277,7 +279,7 @@ async function generateImage(data) {
   if (data.match) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px sans-serif`;
+    ctx.font = `bold ${currentSize === 'post' ? 40 : 54}px MyFont`;
     ctx.fillStyle = '#ffffff';
     ctx.fillText(data.match, W / 2, contentY);
     contentY += currentSize === 'post' ? 30 : 45;
@@ -293,7 +295,7 @@ async function generateImage(data) {
 
   // Footer
   ctx.fillStyle = '#ff6b00';
-  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px sans-serif`;
+  ctx.font = `bold ${currentSize === 'post' ? 22 : 28}px MyFont`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('@thewolfbet', W / 2, H - 40);
